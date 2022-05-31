@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from .serializers import UserSerializer
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -31,3 +33,11 @@ def getRoutes(request):
     ]
 
     return Response(routes)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMe(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
