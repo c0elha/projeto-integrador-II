@@ -2,7 +2,7 @@
  - [ ] Framework Web (Flask, Django)
  - [ ] Banco de Dados (SQLite, MySQL)
  - [ ] Controle de Versões (GIT e GITHub)
- - [ ] Linguagem de programação (Python)
+ - [x] Linguagem de programação (Python)
  - [ ] SCRIPT PARA WEB (Javascript)
  - [ ] COMPUTAÇÃO EM NUVEM
  - [ ] INTERFACE DE PROGRAMAÇÃO DE APLICAÇÕES (API)
