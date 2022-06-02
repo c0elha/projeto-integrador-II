@@ -18,7 +18,7 @@ python manage.py runserver
 ```
 
 ## Test URLs
-    ocurrences: `http://127.0.0.1:8000/api/ocurrences/`
-    ocurrences-categories: `http://127.0.0.1:8000/api/ocurrences-categories/`
-    ocurrences-actions: `http://127.0.0.1:8000/api/ocurrences-actions/`
-    ocurrences-comments: `http://127.0.0.1:8000/api/ocurrences-comments/`
+- ocurrences: `http://127.0.0.1:8000/api/ocurrences/`
+- ocurrences-categories: `http://127.0.0.1:8000/api/ocurrences-categories/`
+- ocurrences-actions: `http://127.0.0.1:8000/api/ocurrences-actions/`
+- ocurrences-comments: `http://127.0.0.1:8000/api/ocurrences-comments/`
