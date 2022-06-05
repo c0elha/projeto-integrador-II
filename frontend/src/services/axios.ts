@@ -11,7 +11,7 @@ export function getAPIClient(ctx?: any) {
     api.interceptors.request.use(config => {
         return config;
     });
-
+    
     if (token) {
         api.defaults.headers['Authorization'] = `Bearer ${token}`;
     }

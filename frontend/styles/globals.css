@@ -84,3 +84,14 @@ a {
 .footer-wrapper{
   text-align: center;
 }
+
+.header-menu-actions{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.header-menu-actions a {
+  padding: 5px;
+}

@@ -5,15 +5,29 @@ import { useAuth } from '../../src/contexts/AuthContext';
 
 const Register: NextPage = () => {
   const { register, handleSubmit } = useForm();
-  const { signUp, recoverUser } = useAuth();
+  const { register : registerUser, signIn } = useAuth();
 
-  async function handleSignUp(data: any) {
-    console.log('handleSignUp', data);
+  async function handleRegister(data: any) {
+    // Register
+    await registerUser(data)
+      .then(async () => {
+        // Sign In
+        await signIn({ username: data.username, password: data.password})
+          .then(() => {
+            console.log('sign in success');
+          })
+          .catch(res => {
+            console.error('sign in error', res);
+          })
+      })
+      .catch(res => {
+        console.error('register error', res);
+      })
   }
-  
+
   return (
     <>
-      <form style={{maxWidth: '600px', margin: '0 auto', padding: '10px '}} onSubmit={handleSubmit(handleSignUp)}>
+      <form style={{maxWidth: '600px', margin: '0 auto', padding: '10px '}} onSubmit={handleSubmit(handleRegister)}>
         <h1>Register</h1>
 
         <div>
@@ -55,6 +69,20 @@ const Register: NextPage = () => {
             required
             className=""
             placeholder="Username"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="email" className="">E-mail</label>
+          <input
+            {...register('email')}
+            id="email"
+            name="email"
+            type="text"
+            autoComplete="email"
+            required
+            className=""
+            placeholder="email"
           />
         </div>
 

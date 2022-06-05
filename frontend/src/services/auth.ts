@@ -7,7 +7,7 @@ type SignInRequestData = {
   password: string;
 };
 
-type SignUpRequestData = {
+type RegisterRequestData = {
   name: string;
   username: string;
   password: string;
@@ -29,20 +29,19 @@ export async function signInRequest(data: SignInRequestData) {
   };
 }
 
-export async function signUpRequest(data: SignUpRequestData) {
-  console.log('signUpRequest data', data);
-  // let token = null;
-  // let refresh = null;
+export async function registerRequest(data: RegisterRequestData) {
+  console.log('registerRequest data', data);
+  
+  let user = null;
 
-  // await api.post(`${prefix}/token/`, data).then(({ data }) => {
-  //   token = data.access;
-  //   refresh = data.refresh;
-  // });
+  await api.post(`${prefix}/register/`, data)
+    .then(({ data }) => {
+      user = data
+    });
 
-  // return {
-  //   token,
-  //   refresh,
-  // };
+  return {
+    user : user
+  }
 }
 
 export async function recoverUserInformation() {

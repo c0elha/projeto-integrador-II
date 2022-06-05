@@ -3,7 +3,7 @@ import { setCookie, parseCookies } from 'nookies'
 import { useContext } from 'react';
 import Router from 'next/router'
 
-import { recoverUserInformation, signInRequest, signUpRequest } from "../services/auth";
+import { recoverUserInformation, signInRequest, registerRequest } from "../services/auth";
 import { api } from "../services/api";
 
 type User = {
@@ -16,9 +16,10 @@ type SignInData = {
   password: string;
 }
 
-type SignUpData = {
+type RegisterData = {
   first_name: string;
   last_name: string;
+  email: string;
   username: string;
   password: string;
   password_confirmation: string;
@@ -26,9 +27,10 @@ type SignUpData = {
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  loading: boolean;
   user: User;
   signIn: (data: SignInData) => Promise<void>
-  signUp: (data: SignUpData) => Promise<void>
+  register: (data: RegisterData) => Promise<void>
   recoverUser: () => Promise<void>
 }
 
@@ -36,6 +38,7 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const isAuthenticated = !!user;
   
@@ -46,11 +49,16 @@ export function AuthProvider({ children }) {
   async function recoverUser() {
     
     const { 'nextauth.token': token } = parseCookies()
- 
+    
+    setLoading(true);
+
     if (token) {
       recoverUserInformation()
       .then(response => {
         setUser(response.user)
+      })
+      .finally(() => {
+        setLoading(false);
       })
     }
   }
@@ -61,9 +69,14 @@ export function AuthProvider({ children }) {
       username,
       password,
     });
-
+    
     setCookie(undefined, 'nextauth.token', token, {
-      maxAge: 60 * 60 * 1, // 1 hour
+      maxAge: 60 * 60 * 48, // 2 dias
+      path: '/',
+    })
+
+    setCookie(undefined, 'nextauth.token-refresh', refresh, {
+      maxAge: 60 * 60 * 48, // 2 dias
       path: '/',
     })
 
@@ -74,9 +87,9 @@ export function AuthProvider({ children }) {
     Router.push('/');
   }
 
-  async function signUp({name, username, password, password_confirmation}: SignInData) {
-    // console.log('signUp', signUp);
-    const data = await signUpRequest({name, username, password, password_confirmation});
+  async function register({first_name, last_name, username, email, password, password_confirmation}: SignInData) {
+    
+    const data = await registerRequest({first_name, last_name, username,email, password, password_confirmation});
     console.log('data', data);
     // setCookie(undefined, 'nextauth.token', token, {
     //   maxAge: 60 * 60 * 1, // 1 hour
@@ -91,7 +104,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, loading, signIn, register }}>
       {children}
     </AuthContext.Provider>
   )

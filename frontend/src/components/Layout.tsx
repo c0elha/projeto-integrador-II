@@ -1,11 +1,13 @@
 import type { NextPage } from 'next';
 import Header from './Header';
 import Footer from './Footer';
+import { useAuth } from '../contexts/AuthContext';
 
-const Layout: NextPage = ({ children }) => {
+const Layout = ({ children, ...props }) => {
+  
   return (
     <>
-      <Header />
+      <Header/>
       <main className='container'>{children}</main>
       <Footer />
     </>
