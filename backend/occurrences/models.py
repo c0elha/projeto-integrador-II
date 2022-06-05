@@ -24,8 +24,8 @@ class Occurrences(models.Model):
     cep = models.CharField(max_length=50, verbose_name="CEP")
     number = models.CharField(max_length=12, verbose_name="Número", blank=True, null=True)
 
-    latitude = models.IntegerField(verbose_name="Latitude")
-    longitude = models.IntegerField(verbose_name="Longitude")
+    latitude = models.CharField(max_length=120,verbose_name="Latitude")
+    longitude = models.CharField(max_length=120, verbose_name="Longitude")
 
     class StatusOccurrences(models.TextChoices):
         NOT_COMPLETED = 'NOT_COMPLETED', _('Não concluida')

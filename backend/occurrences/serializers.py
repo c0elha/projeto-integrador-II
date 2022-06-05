@@ -7,9 +7,16 @@ class CategoriesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OccurrencesSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Occurrences
         fields = '__all__'
+     
+    def save(self, **kwargs):
+        """Include default for read_only `user` field"""
+        kwargs["user"] = self.fields["user"].get_default()
+        return super().save(**kwargs) 
 
 class ActionsSerializer(serializers.ModelSerializer):
     class Meta:
