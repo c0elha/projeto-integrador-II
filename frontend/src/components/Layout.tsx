@@ -8,7 +8,7 @@ const Layout = ({ children, ...props }) => {
   return (
     <>
       <Header/>
-      <main className='container'>{children}</main>
+      {children}
       <Footer />
     </>
   );

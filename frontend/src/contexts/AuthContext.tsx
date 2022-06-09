@@ -9,6 +9,9 @@ import { api } from "../services/api";
 type User = {
   name: string;
   username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
 }
 
 type SignInData = {

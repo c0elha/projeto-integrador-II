@@ -44,7 +44,7 @@ const FormCreate = () => {
         setCategories(data);
         console.log(data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }, []);
 
   const Markers = () => {
@@ -116,8 +116,8 @@ const FormCreate = () => {
 
     await api
       .post('/occurrences/', formData)
-      .then((res) => {})
-      .catch((error) => {});
+      .then((res) => { })
+      .catch((error) => { });
 
     console.log('data', formData);
   }
@@ -125,120 +125,229 @@ const FormCreate = () => {
   return (
     <form onSubmit={handleSubmit(handleCreateOccurrences)}>
       <fieldset>
-        <legend>Criar ocorrência</legend>
+        <legend>Dados de localização da ocorrência</legend>
+        <div className='row'>
+          <div className='col-12 col-lg-5'>
+            <div className='row'>
+              <div className='col-6 form-group'>
+                <label htmlFor='cep'>CEP</label>
+                <input
+                  {...register('cep')}
+                  id='cep'
+                  type='text'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
 
-        <div>
-          <label htmlFor='category'>Category</label>
-          <select
-            {...register('category')}
-            id='category'
-            name='category'
-            defaultValue={''}
-            onChange={(event) => console.log('')}
-          >
-              <option value={''}  disabled >Selecione uma categoria</option>
+              <div className='col-6 form-group'>
+                Buscar
+              </div>
+
+
+
+
+              <div className='col-8 form-group'>
+                <label htmlFor='street'>Rua</label>
+                <input
+                  {...register('street')}
+                  id='street'
+                  type='text'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
+
+              <div className='col-4 form-group'>
+                <label htmlFor='number'>Número</label>
+                <input
+                  {...register('number')}
+                  id='number'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
+
+              <div className='col-6 form-group'>
+                <label htmlFor='street'>Complemento</label>
+                <input
+                  {...register('street')}
+                  id='street'
+                  type='text'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
+
+              <div className='col-6 form-group'>
+                <label htmlFor='street'>Ponto de referencia</label>
+                <input
+                  {...register('street')}
+                  id='street'
+                  type='text'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
+
+              <div className='col-5 form-group'>
+                <label htmlFor='street'>Bairro</label>
+                <input
+                  {...register('street')}
+                  id='street'
+                  type='text'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
+
+              <div className='col-4 form-group'>
+                <label htmlFor='street'>Cidade</label>
+                <input
+                  {...register('street')}
+                  id='street'
+                  type='text'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
+
+              <div className='col-3 form-group'>
+                <label htmlFor='street'>UF</label>
+                <input
+                  {...register('street')}
+                  id='street'
+                  type='text'
+                  required
+                  className='form-control'
+                  onChange={(event) => console.log('')}
+                />
+              </div>
+            </div>
+
+          </div>
+          <div className='col-12 col-lg-7'>
+            <div id='map'>
+              <MapContainer
+                center={initialPosition}
+                zoom={15}
+                style={{ width: '100%', height: 280 }}
+              >
+                <TileLayer
+                  url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=sk.eyJ1IjoiZ2VvdmFuYWNvZWxobyIsImEiOiJjbDQycmJzdTg0bG05M2RsOHAycHl1Nm5jIn0.eegan_Kz-MQ4bsFngXBU4A`}
+                />
+                <Markers />
+              </MapContainer>
+            </div>
+          </div>
+
+        </div>
+
+      </fieldset>
+
+      <fieldset>
+        <legend>Informações da ocorrência</legend>
+
+        <div className='row'>
+          <div className='col-12 col-lg-5'>
+            <div className='form-group'>
+              <label htmlFor='category'>Category</label>
+              <select
+                {...register('category')}
+                id='category'
+                name='category'
+                className='form-control'
+                defaultValue={''}
+                onChange={(event) => console.log('')}
+              >
+                <option value={''} disabled >Selecione uma categoria</option>
                 {categories.map((category) => {
                   return <option key={category.id} value={category.id}>{category.name}</option>;
                 })}
-          </select>
-        </div>
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='images'>Fotos</label>
+              <input
+                {...register('image')}
+                type='file'
+                accept='.png, .jpg, .jpeg'
+                onChange={handleSelectImages}
+                className='form-control'
+                id='image'
+              />
 
-        <div>
-          <label htmlFor='cep'>CEP</label>
-          <input
-            {...register('cep')}
-            id='cep'
-            onChange={(event) => console.log('')}
-          />
-        </div>
+              <div className='images-container'>
+                {previewImages.map((image) => {
+                  return (
+                    <div key={image.url}>
+                      <span
+                        className='remove-image'
+                        onClick={() => handleRemoveImage(image)}
+                      >
+                        Remover
+                      </span>
+                      <img src={image.url} alt={name} className='added-image' />
+                    </div>
+                  );
+                })}
 
-        <div>
-          <label htmlFor='number'>Número</label>
-          <input
-            {...register('number')}
-            id='number'
-            onChange={(event) => console.log('')}
-          />
-        </div>
+                <label htmlFor='image[]' className='new-image'>
+                  Adicionar
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className='col-12 col-lg-7'>
+            <div className='form-group'>
+              <label htmlFor='title'>Título</label>
+              <input
+                {...register('title')}
+                id='title'
+                className='form-control'
+                onChange={(event) => console.log('')}
+              />
+            </div>
 
-        <div id='map'>
-          <MapContainer
-            center={initialPosition}
-            zoom={15}
-            style={{ width: '100%', height: 280 }}
-          >
-            <TileLayer
-              url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=sk.eyJ1IjoiZ2VvdmFuYWNvZWxobyIsImEiOiJjbDQycmJzdTg0bG05M2RsOHAycHl1Nm5jIn0.eegan_Kz-MQ4bsFngXBU4A`}
-            />
-            <Markers />
-          </MapContainer>
-        </div>
-        <div>
-          <label htmlFor='title'>Título</label>
-          <input
-            {...register('title')}
-            id='title'
-            onChange={(event) => console.log('')}
-          />
-        </div>
+            <div className='form-group'>
+              <label htmlFor='description'>Descrição</label>
+              <textarea
+                {...register('description')}
+                rows={4}
+                id='description'
+                className='form-control'
+                onChange={(event) => console.log('')}
+              />
+            </div>
 
-        <div>
-          <label htmlFor='description'>Descrição</label>
-          <textarea
-            {...register('description')}
-            rows={6}
-            id='description'
-            onChange={(event) => console.log('')}
-          />
-        </div>
+            <div className='form-group'>
+              <label htmlFor='is_anonymous'>Registrar como anonimo</label>
 
-        <div>
-          <input
-            {...register('is_anonymous')}
-            type='checkbox'
-            id='is_anonymous'
-            onChange={(event) => console.log('')}
-          />
-          <label htmlFor='is_anonymous'>Registrar como anonimo</label>
-          <br />
-          <small>
-            Suas informações de usuario não ira aparece para outras pessoas.
-          </small>
-        </div>
+              <input
+                {...register('is_anonymous')}
+                type='checkbox'
+                className='form-control'
+                id='is_anonymous'
+                onChange={(event) => console.log('')}
+              />
+              <br />
+              <small>
+                Suas informações de usuario não ira aparece para outras pessoas.
+              </small>
+            </div>
 
-        <div>
-          <label htmlFor='images'>Fotos</label>
-          <input
-            {...register('image')}
-            type='file'
-            accept='.png, .jpg, .jpeg'
-            onChange={handleSelectImages}
-            id='image'
-          />
-
-          <div className='images-container'>
-            {previewImages.map((image) => {
-              return (
-                <div key={image.url}>
-                  <span
-                    className='remove-image'
-                    onClick={() => handleRemoveImage(image)}
-                  >
-                    Remover
-                  </span>
-                  <img src={image.url} alt={name} className='added-image' />
-                </div>
-              );
-            })}
-
-            <label htmlFor='image[]' className='new-image'>
-              Adicionar
-            </label>
           </div>
         </div>
       </fieldset>
 
-      <button type='submit'>Salvar</button>
+      <button type='submit' className='btn btn-primary-outline'>Salvar</button>
     </form>
   );
 };

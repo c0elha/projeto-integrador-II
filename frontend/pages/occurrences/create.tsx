@@ -7,46 +7,50 @@ import { getAPIClient } from '../../src/services/axios';
 
 const OccorrencesCreate: NextPage = () => {
 
-    const FormCreate = dynamic(() => import('./FormCreate'), {
-        ssr: false,
-        loading: () => <p>Carregando!</p>,
-    });
+  const FormCreate = dynamic(() => import('./FormCreate'), {
+    ssr: false,
+    loading: () => <p>Carregando!</p>,
+  });
 
-    useEffect(() => { }, []);
+  useEffect(() => { }, []);
 
-    return (
-        <div className='footer-wrapper container'>
-            <FormCreate></FormCreate>
-        </div>
-    );
+  return (
+    <main className='container'>
+      <FormCreate></FormCreate>
+    </main>
+  );
 };
 
 export default OccorrencesCreate;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const apiClient = getAPIClient(ctx);
-  const { ['nextauth.token']: token } = parseCookies(ctx)
-  
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      }
-    }
-  }
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const apiClient = getAPIClient(ctx);
+//   const { ['nextauth.token']: token } = parseCookies(ctx)
 
-  await apiClient
-    .get(`user/me/`).then(({ data }) => {
-      window.location.href = '/occurrences/create'
-    })
-    .catch(() => {
-      destroyCookie(null, 'nextauth.token');
-      window.location.href = '/auth/login';
-    });
+//   if (!token) {
+//     return {
+//       redirect: {
+//         destination: '/auth/login',
+//         permanent: false,
+//       }
+//     }
+//   }
 
-  return {
-    props: {}
-  }
-}
+//   var redirectUrl = '/auth/login'
+
+//   await apiClient
+//     .get(`user/me/`).then(({ data }) => {
+//       redirectUrl = '/occurrences/create'
+//     })
+//     .catch(() => {
+//       destroyCookie(null, 'nextauth.token');
+//     });
+
+//   return {
+//     redirect: {
+//       destination: redirectUrl,
+//       permanent: false,
+//     }
+//   }
+// }
 

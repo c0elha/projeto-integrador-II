@@ -8,51 +8,55 @@ const Login: NextPage = () => {
   const { signIn, recoverUser } = useAuth();
 
   async function handleSignIn(data: any) {
-    
+
     await signIn(data)
-    .then(() => {
-      console.log('sign in success');
-    })
-    .catch(res => {
-      console.error('sign in error', res);
-    })
+      .then(() => {
+        console.log('sign in success');
+      })
+      .catch(res => {
+        console.error('sign in error', res);
+      })
   }
-  
+
   return (
-    <>
-      <form style={{maxWidth: '600px', margin: '0 auto', padding: '10px '}} onSubmit={handleSubmit(handleSignIn)}>
-        <h1>Login</h1>
-        <div>
-          <label htmlFor="username" className="">Username</label>
-          <input
-            {...register('username')}
-            id="username"
-            name="username"
-            type="username"
-            autoComplete="username"
-            required
-            className=""
-            placeholder="Username"
-          />
-        </div>
+    <main className='container'>
+      <form onSubmit={handleSubmit(handleSignIn)} className='form-mini'>
+        <fieldset>
+          <legend>Entrar</legend>
 
-        <div>
-          <label htmlFor="password" className="">Password</label>
-          <input
-            {...register('password')}
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className=""
-            placeholder="Password"
-          />
-        </div>
+          <div className='form-group'>
+            <label htmlFor="username" className="">Usuário<span className='required-icon'>*</span></label>
+            <input
+              {...register('username')}
+              id="username"
+              name="username"
+              type="text"
+              autoComplete="username"
+              required
+              className="form-control"
+              placeholder="Usuário"
+            />
+          </div>
 
-        <button type='submit'>Entrar</button>
+          <div className='form-group'>
+            <label htmlFor="password" className="">Senha<span className='required-icon'>*</span></label>
+            <input
+              {...register('password')}
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="form-control"
+              placeholder="Informe sua senha"
+            />
+          </div>
+
+        </fieldset>
+
+        <button type='submit' className='btn btn-primary-outline w-100'>Entrar</button>
       </form>
-    </>
+    </main>
   )
 }
 

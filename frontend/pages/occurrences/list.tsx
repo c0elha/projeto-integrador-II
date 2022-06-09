@@ -3,6 +3,7 @@ import { destroyCookie, parseCookies } from 'nookies';
 import { useEffect, useState } from 'react';
 import { api } from '../../src/services/api';
 import { getAPIClient } from '../../src/services/axios';
+import Link from 'next/link'
 
 interface Occurrences {
   id: number;
@@ -22,48 +23,62 @@ const OccorrencesIndex: NextPage = () => {
   }, []);
 
   return (
-    <div className=''>
-      {occurrences.map((occurrence) => {
-        return (
-          <div key={occurrence.id} style={{ border: '1px solid red' }}>
-            <span>{occurrence.title}</span>
-            <p>{occurrence.description}</p>
+    <main className='container list-occurrences'>
+      <h3>Lista de ocorrências</h3>
+      <p>Acompanhe as ocorrências em que é responsável.</p>
 
-            <a href='#'>Editar</a>
-            <a href='#'>Visualizar</a>
-          </div>
-        );
-      })}
-    </div>
+      <div className='list-occurrences-content'>
+        {occurrences.map((occurrence) => {
+          return (
+            <div className='list-occurrences-content-tem' key={occurrence.id}>
+              <div>
+              <h4>Titúlo: {occurrence.title}</h4>
+              <p>Descrição: {occurrence.description}</p>
+              <p>CEP: {occurrence.cep}</p>
+            </div>
+                <div>
+                  <Link href={`/occurrences/edit/${occurrence.id}`}>
+                    <a className=''>Editar</a>
+                  </Link>
+
+                  <Link href={`/occurrences/view/${occurrence.id}`}>
+                    <a className=''>Visualizar</a>
+                  </Link>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </main>
   );
 };
 
 export default OccorrencesIndex;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const apiClient = getAPIClient(ctx);
-  const { ['nextauth.token']: token } = parseCookies(ctx);
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const apiClient = getAPIClient(ctx);
+//   const { ['nextauth.token']: token } = parseCookies(ctx);
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      },
-    };
-  }
+//   if (!token) {
+//     return {
+//       redirect: {
+//         destination: '/auth/login',
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  await apiClient
-    .get(`user/me/`)
-    .then(({ data }) => {
-      window.location.href = '/occurrences/list';
-    })
-    .catch(() => {
-      destroyCookie(null, 'nextauth.token');
-      window.location.href = '/auth/login';
-    });
+//   await apiClient
+//     .get(`user/me/`)
+//     .then(({ data }) => {
+//       window.location.href = '/occurrences/list';
+//     })
+//     .catch(() => {
+//       destroyCookie(null, 'nextauth.token');
+//       window.location.href = '/auth/login';
+//     });
 
-  return {
-    props: {},
-  };
-};
+//   return {
+//     props: {},
+//   };
+// };
