@@ -1,0 +1,32 @@
+.list_container{
+   margin-top: 2rem;
+}
+.list_wrapper{
+
+    &_item{
+        position: relative;
+        border: 2px solid #e9ebef;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        @media (min-width: 1200px) {
+            align-items: center;
+            flex-direction: row;
+        }
+        &_links{
+            width: 100%;
+            text-align: center;
+            @media (min-width: 1200px) {
+                width: auto;
+            }
+        }
+        &_links a{
+            margin: 0 .5rem;
+        }
+    }
+}

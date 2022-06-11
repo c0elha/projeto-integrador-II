@@ -1,9 +1,8 @@
-import Router from 'next/router'
-import Link from 'next/link';
 import { parseCookies, destroyCookie } from 'nookies';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import ActiveLink from './ActiveLink';
+import styles from './../../styles/Header.module.scss';
 
 const Header = () => {
     const { user } = useAuth();
@@ -25,27 +24,27 @@ const Header = () => {
     }
 
     return (
-        <div className='header-wrapper'>
-            <div className='container'>
-                <div className='presentation-header-content'>
-                    <h1 className='presentation-header-content--title'>Nome</h1>
-                    <h2 className='presentation-header-content--subtitle'>Descrição</h2>
+        <div className={styles.header_wrapper}>
+            <div className={`container ${styles.header_wrapper_container}`}>
+                <div className={styles.header_wrapper_presentation}>
+                    <h1 className={styles.header_wrapper_presentation_title}>Grupo 21</h1>
+                    {/* <h2 className={styles.header_wrapper_presentation_subtitle}>Sistema web para registro de ocorrências pelos munícipes de Lins-SP</h2> */}
                 </div>
 
-                <ul className='menu-header-content'>
-                    <li className='menu-header-content--item'>
+                <ul className={styles.header_wrapper_menu}>
+                    <li className={styles.header_wrapper_menu_item}>
                         <ActiveLink href="/" activeClassName="active" >
-                            <a className="">Home</a>
+                            <a className={styles.header_wrapper_menu_item_a}>Home</a>
                         </ActiveLink>
                     </li>
-                    <li className='menu-header-content--item'>
+                    <li className={styles.header_wrapper_menu_item}>
                         <ActiveLink href="/#about" activeClassName="active" >
-                            <a className="">Sobre o projeto</a>
+                            <a className={styles.header_wrapper_menu_item_a}>Sobre o projeto</a>
                         </ActiveLink>
                     </li>
-                    <li className='menu-header-content--item'>
+                    <li className={styles.header_wrapper_menu_item}>
                         <ActiveLink href="/#occurrences-map" activeClassName="active">
-                            <a className="">Acompanhar ocorrências</a>
+                            <a className={styles.header_wrapper_menu_item_a}>Acompanhar ocorrências</a>
                         </ActiveLink>
                     </li>
                 </ul>

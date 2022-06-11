@@ -1,0 +1,52 @@
+.btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    background: none;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all .2s;
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn.active {
+    font-weight: 800;
+}
+
+.btn-white-outline {
+    border: 2px solid var(--paletteColor8);
+    color: var(--paletteColor8);
+}
+
+.btn-white-outline:hover, .btn-white-outline:focus {
+    background-color: var(--paletteColor7);
+    border: 2px solid var(--paletteColor7);
+    color: var(--color-primary);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    color: var(--paletteColor7);
+}
+
+.btn-primary-outline {
+    background-color: var(--paletteColor7);
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn-primary-outline:hover, .btn-primary-outline:focus  {
+    background-color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    color: var(--paletteColor7);
+}
+
+.btn svg {
+    margin-left: 4px;
+}

@@ -1,0 +1,18 @@
+.occurrence_container{
+    &_info{
+        margin: 1rem 0;
+        &_titles{
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+    }
+
+    &_actions {
+        margin: 1rem 0;
+    }
+
+    &_image {
+        border-top: 1px solid #ddd;
+        padding-top: 1rem;
+    }
+}

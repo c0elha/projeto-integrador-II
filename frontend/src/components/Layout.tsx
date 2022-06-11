@@ -1,10 +1,8 @@
-import type { NextPage } from 'next';
 import Header from './Header';
 import Footer from './Footer';
-import { useAuth } from '../contexts/AuthContext';
+import React from 'react';
 
-const Layout = ({ children, ...props }) => {
-  
+const Layout = ({ children, ...props }: React.PropsWithChildren<{}>) => {
   return (
     <>
       <Header/>
