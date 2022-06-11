@@ -3,40 +3,50 @@ import { destroyCookie, parseCookies } from 'nookies';
 import { useEffect, useState } from 'react';
 import { api } from '../../src/services/api';
 import { getAPIClient } from '../../src/services/axios';
-import Link from 'next/link'
+import Link from 'next/link';
+
+import styles from './../../styles/pages/OccurrencesList.module.scss';
+import { any } from 'prop-types';
 
 interface Occurrences {
   id: number;
 }
 
-const OccorrencesIndex: NextPage = () => {
-  const [occurrences, setOccurrences] = useState<[]>([]);
-
-  useEffect(() => {
-    api
-      .get('/occurrences-list/')
-      .then(({ data }) => {
-        setOccurrences(data);
-        console.log(data);
-      })
-      .catch((error) => {});
-  }, []);
-
+const OccorrencesIndex: NextPage = ({ occurrences }: any) => {
   return (
     <main className='container list-occurrences'>
-      <h3>Lista de ocorrências</h3>
-      <p>Acompanhe as ocorrências em que é responsável.</p>
+      <div className={styles.list_container}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <h3>Lista de ocorrências</h3>
+            <p>Acompanhe as ocorrências em que é responsável.</p>
+          </div>
+          <Link href={`/occurrences/create`}>
+            <a className='btn btn-primary'>Criar Ocorrência</a>
+          </Link>
+        </div>
 
-      <div className='list-occurrences-content'>
-        {occurrences.map((occurrence) => {
-          return (
-            <div className='list-occurrences-content-tem' key={occurrence.id}>
-              <div>
-              <h4>Titúlo: {occurrence.title}</h4>
-              <p>Descrição: {occurrence.description}</p>
-              <p>CEP: {occurrence.cep}</p>
-            </div>
+        <div className={styles.list_wrapper}>
+          {occurrences.length === 0 ? (
+            <p style={{ textAlign: 'center' }}>
+              Ainda não possui nenhuma ocorrência cadastrada!
+            </p>
+          ) : null}
+          {occurrences.map((occurrence: any) => {
+            return (
+              <div className={styles.list_wrapper_item} key={occurrence.id}>
                 <div>
+                  <h4>Titúlo: {occurrence.title}</h4>
+                  <p>Descrição: {occurrence.description}</p>
+                  <p>CEP: {occurrence.cep}</p>
+                </div>
+                <div className={styles.list_wrapper_item_links}>
                   <Link href={`/occurrences/edit/${occurrence.id}`}>
                     <a className=''>Editar</a>
                   </Link>
@@ -44,10 +54,11 @@ const OccorrencesIndex: NextPage = () => {
                   <Link href={`/occurrences/view/${occurrence.id}`}>
                     <a className=''>Visualizar</a>
                   </Link>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </main>
   );
@@ -55,30 +66,51 @@ const OccorrencesIndex: NextPage = () => {
 
 export default OccorrencesIndex;
 
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   const apiClient = getAPIClient(ctx);
-//   const { ['nextauth.token']: token } = parseCookies(ctx);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  var user = false;
+  var occurrences = [] as any;
+  const apiClient = getAPIClient(ctx);
+  const { ['nextauth.token']: token } = parseCookies(ctx);
 
-//   if (!token) {
-//     return {
-//       redirect: {
-//         destination: '/auth/login',
-//         permanent: false,
-//       },
-//     };
-//   }
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: false,
+      },
+    };
+  }
 
-//   await apiClient
-//     .get(`user/me/`)
-//     .then(({ data }) => {
-//       window.location.href = '/occurrences/list';
-//     })
-//     .catch(() => {
-//       destroyCookie(null, 'nextauth.token');
-//       window.location.href = '/auth/login';
-//     });
+  var redirectUrl = '/auth/login';
 
-//   return {
-//     props: {},
-//   };
-// };
+  await apiClient
+    .get(`user/me/`)
+    .then(({ data }) => {
+      user = true;
+    })
+    .catch(() => {
+      destroyCookie(null, 'nextauth.token');
+    });
+
+  if (user) {
+    await apiClient
+      .get('/occurrences-list/')
+      .then(({ data }) => {
+        occurrences = data;
+      })
+      .catch((error) => {});
+
+    return {
+      props: {
+        occurrences: occurrences,
+      },
+    };
+  }
+
+  return {
+    redirect: {
+      destination: redirectUrl,
+      permanent: false,
+    },
+  };
+};

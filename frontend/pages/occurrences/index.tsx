@@ -7,11 +7,6 @@ const Index: NextPage = () => {
 
     const [occurrences, setOccurrences] = useState<[]>([]);
 
-    const MapWithNoSSR = dynamic(() => import('./MapIndex'), {
-        ssr: false,
-        loading: () => <p>A map is loading</p>,
-    });
-
     useEffect(() => {
         api
             .get('/occurrences/')
@@ -23,7 +18,7 @@ const Index: NextPage = () => {
     }, []);
 
     return <div className=''>
-        {occurrences.length ? (<MapWithNoSSR occurrences={occurrences}/>) : null}
+        {occurrences.length ? (<div></div>) : null}
     </div>;
 };
 
