@@ -1,6 +1,8 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../src/contexts/AuthContext';
+import { getAPIClient } from '../../src/services/axios';
+import { destroyCookie, parseCookies } from 'nookies';
 
 const Profile: NextPage = () => {
   const { register, handleSubmit } = useForm();
@@ -73,3 +75,34 @@ const Profile: NextPage = () => {
 }
 
 export default Profile
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const apiClient = getAPIClient(ctx);
+  const { ['nextauth.token']: token } = parseCookies(ctx)
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: false,
+      }
+    }
+  }
+
+  var redirectUrl = '/auth/login'
+
+  await apiClient
+    .get(`user/me/`).then(({ data }) => {
+      redirectUrl = '/occurrences/create'
+    })
+    .catch(() => {
+      destroyCookie(null, 'nextauth.token');
+    });
+
+  return {
+    redirect: {
+      destination: redirectUrl,
+      permanent: false,
+    }
+  }
+}

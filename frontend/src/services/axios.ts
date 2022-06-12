@@ -4,17 +4,23 @@ import { parseCookies } from 'nookies';
 export function getAPIClient(ctx?: any) {
     const {'nextauth.token' : token} = parseCookies(ctx);
 
-    const api = axios.create({
-        baseURL: 'http://127.0.0.1:8000/api/'
-    });
+    let configs = {
+        baseURL: process.env.NEXT_PUBLIC_URL_API
+    };
+    
+    if (token && axios.defaults.headers != null) {
+        configs = {...configs, ...{
+            headers: {
+                'Authorization' : `Bearer ${token}`
+            }
+        }}
+    }
+
+    const api = axios.create(configs);
 
     api.interceptors.request.use(config => {
         return config;
     });
-    
-    if (token) {
-        api.defaults.headers['Authorization'] = `Bearer ${token}`;
-    }
 
     return api;
 }

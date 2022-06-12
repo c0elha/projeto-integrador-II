@@ -1,5 +1,6 @@
 import {  destroyCookie } from 'nookies'
 import { api } from './api';
+import { getAPIClient } from './axios';
 const prefix = 'user';
 
 type SignInRequestData = {
@@ -8,7 +9,9 @@ type SignInRequestData = {
 };
 
 type RegisterRequestData = {
-  name: string;
+  email: string;
+  first_name: string;
+  last_name: string;
   username: string;
   password: string;
   password_confirmation: string;
@@ -46,8 +49,8 @@ export async function registerRequest(data: RegisterRequestData) {
 
 export async function recoverUserInformation() {
   let user = null;
-  
-  await api
+
+  await getAPIClient()
     .get(`${prefix}/me/`).then(({ data }) => {
       user = data;
     })
