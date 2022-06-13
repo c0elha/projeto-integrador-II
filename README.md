@@ -16,4 +16,4 @@
  - [ ] Testes de aplicação web api phython biblioteca das rotas, integração, unitario, escrever no relatorio. Programação.
  - [ ] Teste em nuvem, heroku documentação, linux.  
  - [ ] Terminar diagrama e colocar no reademe.
-
+ - [ ] Feedbacku na forma de formulario.
