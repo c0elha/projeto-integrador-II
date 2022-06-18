@@ -24,7 +24,7 @@ const OccorrencesView: NextPage = ({
   const description = `${occurrence.description}`;
   const url = `http://projeto-integrador-2-frontend.herokuapp.com/occurrences/view/${occurrence.id}`;
 
-  const image = `http://projeto-integrador-2-frontend.herokuapp.com/static/ilustracao-share2.png`;
+  const image = `http://projeto-integrador-2-frontend.herokuapp.com/static/ilustracao-share.png`;
 
   const [category, setCategory] = useState<Category>();
   const [categories, setCategories] = useState<Category[]>([]);

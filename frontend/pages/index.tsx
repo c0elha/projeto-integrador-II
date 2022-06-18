@@ -2,7 +2,7 @@ import type { GetServerSideProps, NextPage } from 'next';
 import { useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import ImagemIlustracao from './../src/images/ilustracao-plana-de-suporte-ao-cliente1.png';
+import ImagemIlustracao from './../src/images/ilustracao-plana-de-suporte-ao-cliente.png';
 import RenderCompleted from '../src/components/RenderCompleted';
 import { FiPlus } from 'react-icons/fi';
 import styles from './../styles/pages/index.module.scss';

@@ -36,8 +36,8 @@ const OccorrencesAll: NextPage = ({ occurrences }: any) => {
 
   return (
     <main className='container' style={{ marginTop: '10px' }}>
-      <h3>Acompanhe as ocorrências da cidade!</h3>
-      <div style={{ marginTop: '10px', minHeight: '300px', height: '60vh' }}>
+      <h2>Acompanhe as ocorrências da cidade!</h2>
+      <div id="map" style={{ marginTop: '10px', minHeight: '300px', height: '60vh' }}>
         {isMounted && (
           <MapAll occurrences={occurrences} categories={categories} />
         )}

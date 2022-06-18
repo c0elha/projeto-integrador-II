@@ -79,12 +79,12 @@ const Header = () => {
                     {user ? (
                         <div className='header-menu-actions'>
                             <ActiveLink href="/auth/profile" activeClassName="active">
-                                <a className=""><strong>Olá,</strong> {user.username}!</a>
+                                <a className=""><strong>Olá,</strong><span>{user.username}</span>!</a>
                             </ActiveLink>
                             <ActiveLink href="/occurrences/list" activeClassName="active">
                                 <a className="">Minhas Ocorrências</a>
                             </ActiveLink>
-                            <button onClick={handleLogout} className='btn btn-white-outline'>Sair</button>
+                            <button onClick={handleLogout} className='btn btn-white-outline' id='btn-logout'>Sair</button>
                         </div>
                     ) : (
                         <div className='header-menu-actions'>

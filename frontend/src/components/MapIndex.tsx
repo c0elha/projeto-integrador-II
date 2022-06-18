@@ -48,7 +48,7 @@ const MapIndex = ({ occurrences, categories }: any) => {
     }
     return mapIcon;
   }
-
+  console.log('occurrences', occurrences);
   return (
     <MapContainer
       center={initialPosition}
