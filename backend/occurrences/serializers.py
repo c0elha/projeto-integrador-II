@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Occurrences, Categories, Actions, Comments
+from .models import Occurrences, Categories
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,13 +23,3 @@ class OccurrencesSerializer(serializers.ModelSerializer):
     def put(self, **kwargs):
         kwargs["user"] = self.fields["user"].get_default()
         return super().save(**kwargs)     
-
-class ActionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Actions
-        fields = '__all__'
-
-class CommentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comments
-        fields = '__all__'                

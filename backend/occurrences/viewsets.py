@@ -6,8 +6,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 
-from .serializers import ActionsSerializer, CategoriesSerializer, CommentsSerializer, OccurrencesSerializer
-from .models import Actions, Categories, Comments, Occurrences
+from .serializers import CategoriesSerializer, OccurrencesSerializer
+from .models import Categories, Occurrences
 
 # @permission_classes([IsAuthenticated])
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -18,17 +18,6 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class OccurrencesViewSet(viewsets.ModelViewSet):
     serializer_class = OccurrencesSerializer
     queryset = Occurrences.objects.all()
-
-# @permission_classes([IsAuthenticated])
-class ActionsViewSet(viewsets.ModelViewSet):
-    serializer_class = ActionsSerializer
-    queryset = Actions.objects.all()
-
-# @permission_classes([IsAuthenticated])
-class CommentsViewSet(viewsets.ModelViewSet):
-    serializer_class = CommentsSerializer
-    queryset = Comments.objects.all()    
-        
 
 
 

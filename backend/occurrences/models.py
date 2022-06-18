@@ -45,42 +45,8 @@ class Occurrences(models.Model):
         choices=StatusOccurrences.choices,
         default=StatusOccurrences.NOT_COMPLETED,
     )
-    
-    class StatusOccurrences(models.TextChoices):
-        NOT_COMPLETED = 'NOT_COMPLETED', _('Não concluida')
-        COMPLETED = 'COMPLETED', _('Completa')
-        DELETED = 'DELETED', _('Deletada')
-
-    status = models.CharField(
-        max_length=50,
-        choices=StatusOccurrences.choices,
-        default=StatusOccurrences.NOT_COMPLETED,
-    )
 
     image = models.ImageField(
         upload_to=upload_image_occurrences, blank=True, null=True)
 
-    created_at = models.DateField(auto_now_add=True)
-
-class Actions(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    occurrences = models.ForeignKey(Occurrences, on_delete=models.PROTECT)
-
-    class typeAction(models.TextChoices):
-        LIKE = 'LIKE', _('Curtir')
-
-    type = models.CharField(
-        max_length=50,
-        choices=typeAction.choices,
-        default=typeAction.LIKE,
-    )
-
-    created_at = models.DateField(auto_now_add=True)
-
-class Comments(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    occurrences = models.ForeignKey(Occurrences, on_delete=models.PROTECT)
-
-    description = models.CharField(max_length=320, null=True)
-    
     created_at = models.DateField(auto_now_add=True)

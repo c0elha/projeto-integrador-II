@@ -119,14 +119,21 @@ WSGI_APPLICATION = 'base.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'da4ott9qs1518i', 
-        'USER': 'sqtfopcxbkgktv', 
-        'PASSWORD': 'ef63de6e0c7af4e7df30e973cf19e84b1c0932832d0758c76279287b17f05d6b',
-        'HOST': 'ec2-52-71-69-66.compute-1.amazonaws.com', 
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'da4ott9qs1518i', 
+#         'USER': 'sqtfopcxbkgktv', 
+#         'PASSWORD': 'ef63de6e0c7af4e7df30e973cf19e84b1c0932832d0758c76279287b17f05d6b',
+#         'HOST': 'ec2-52-71-69-66.compute-1.amazonaws.com', 
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
