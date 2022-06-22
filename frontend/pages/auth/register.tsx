@@ -1,15 +1,17 @@
 import type { NextPage } from 'next';
 import { useForm } from 'react-hook-form';
-import { useContext, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../../src/contexts/AuthContext';
 import Image from 'next/image';
 
 const Register: NextPage = () => {
+  const [errorsApi, setErrorsApi] = useState<[]>([]);
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    setError
   } = useForm();
 
   const { register: registerUser, signIn } = useAuth();
@@ -18,24 +20,54 @@ const Register: NextPage = () => {
 
   async function handleRegister(data: any) {
     // Register
+    window.loadingUtils.show();
+
     await registerUser(data)
       .then(async () => {
         // Sign In
+        window.loadingUtils.show();
         await signIn({ username: data.username, password: data.password })
           .then(() => {
             console.log('sign in success');
           })
           .catch((res) => {
             console.error('sign in error', res);
-          });
+          })
+          .finally(() => {
+            window.loadingUtils.hide();
+          })
       })
-      .catch((res) => {
-        console.error('register error', res);
-      });
+      .catch((error) => {
+        if (error.response) {
+          var errorsData = error.response.data;
+
+          Object.keys(errorsData).forEach((error, i) =>{
+            Object.entries(errorsData[error]).forEach(([key, value] : any) => {
+              setError(error, { type: 'manual', message: value })
+          });
+            
+          })
+
+          // setErrorsApi(error.response.data);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+        console.error('register error', error);
+      })
+      .finally(() => {
+        window.loadingUtils.hide();
+      })
   }
 
   return (
     <main className='container'>
+      {errorsApi.length > 0 ? (
+        <div>
+
+        </div>
+      ) : null}
       <form onSubmit={handleSubmit(handleRegister)} className='form-mini'>
         <fieldset>
           <legend>Cadastrar-se</legend>
@@ -174,6 +206,15 @@ const Register: NextPage = () => {
                   {errors.password?.message}
                 </div>
               )}
+
+              <div className='invalid-feedback'>
+                <ul>
+                  <li>Senha deve ter pelo menos 8 caracteres</li>
+                  <li>Sua senha deve conter números</li>
+                  <li>Sua senha deve conter letras</li>
+                  <li>Sua senha não deve conter sequências de número comuns como 12345678</li>
+                </ul>
+              </div>
             </div>
 
             <div className='col-12 col-md-6 form-group'>

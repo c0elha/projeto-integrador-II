@@ -11,7 +11,7 @@ const OccorrencesCreate: NextPage = () => {
   const FormCreate = useMemo(
     () =>
       dynamic(() => import('./../../src/components/FormCreate'), {
-        loading: () => <p>Carregando!</p>,
+        loading: () => <p style={{textAlign: 'center'}}>Carregando!</p>,
         ssr: false,
       }),
     []

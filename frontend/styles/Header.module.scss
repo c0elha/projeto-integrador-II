@@ -8,7 +8,7 @@ $height-header-lg: 80px;
     color: var(--paletteColor7);
 
     @media (min-width: 1200px) {
-          height: var(--height-header);
+        min-height: var(--height-header);
       
       }
 
@@ -17,6 +17,26 @@ $height-header-lg: 80px;
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
+
+        &_accesskeys {
+            height: auto !important;
+
+            ul {
+                padding: 10px 0;
+                margin: 0;
+                display: flex;
+                list-style: none;
+                flex-direction: column;
+
+                @media (min-width: 768px){
+                    flex-direction: row;
+                }
+
+                li{
+                    margin-right: 10px;
+                }
+            }
+        }
 
         @media (min-width: 1200px) {
             display: flex;
@@ -51,6 +71,7 @@ $height-header-lg: 80px;
         @media (min-width: 768px){
             flex-direction: row;
         }
+
         &_item{
             padding: .5rem 0;
 

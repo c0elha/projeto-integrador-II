@@ -12,11 +12,17 @@ class OccurrencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Occurrences
         fields = '__all__'
+        extra_kwargs = {    
+            'image': {'required': False},
+        }
      
     def save(self, **kwargs):
-        """Include default for read_only `user` field"""
         kwargs["user"] = self.fields["user"].get_default()
         return super().save(**kwargs) 
+
+    def put(self, **kwargs):
+        kwargs["user"] = self.fields["user"].get_default()
+        return super().save(**kwargs)     
 
 class ActionsSerializer(serializers.ModelSerializer):
     class Meta:

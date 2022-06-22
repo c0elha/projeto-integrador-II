@@ -1,18 +1,12 @@
-import dynamic from 'next/dynamic';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
-const position = [51.505, -0.09];
-import { api } from '../services/api';
-import L from 'leaflet';
-// import mapIcon from "../utils/mapIcon";
-// const mapIcon = L.icon({ iconUrl: "/images/marker-icon.png" });
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
 import axios from 'axios';
-import Router from 'next/router'
-import mapIcon from '../utils/mapIcon';
+import Router from 'next/router';
+import mapIcon from '../utils/mapIconBlack';
+import { getAPIClient } from '../services/axios';
+import { getCategories } from '../services/category';
 
 interface PreviewImage {
   name: string;
@@ -23,6 +17,7 @@ interface Category {
   id: number;
   name: string;
   description: string;
+  color: string;
 }
 
 const FormCreate = () => {
@@ -39,18 +34,15 @@ const FormCreate = () => {
   const [previewImages, setPreviewImages] = useState<PreviewImage[]>([]);
 
   useEffect(() => {
-    api
-      .get('/occurrences-categories/')
-      .then(({ data }) => {
-        setCategories(data);
+    getCategories()
+      .then(({ data } : any) => {
+        setCategories(data.sort( (a : any, b:any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)));
       })
-      .catch((error) => { });
   }, []);
 
   const Markers = () => {
     const map = useMapEvents({
       click(event) {
-        console.log('useMapEvents ->', event);
         const { lat, lng } = event.latlng;
 
         setPosition({
@@ -60,7 +52,7 @@ const FormCreate = () => {
       },
     });
 
-    return position.latitude !== 0 ? (
+    return +position.latitude !== 0 && +position.longitude !== 0 ? (
       <Marker
         interactive={false}
         key={position.latitude}
@@ -85,36 +77,25 @@ const FormCreate = () => {
 
   async function searchCep() {
     if (cep.length >= 8) {
-      
-      await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-      .then(async ({ data }) => {
-        if (data.bairro) {
-          setValue('neighborhood', data.bairro);
-        }
+      await axios
+        .get(`https://viacep.com.br/ws/${cep}/json/`)
+        .then(async ({ data }) => {
+          if (data.bairro) {
+            setValue('neighborhood', data.bairro);
+          }
 
-        if (data.logradouro) {
-          setValue('street', data.logradouro);
-        }
+          if (data.logradouro) {
+            setValue('street', data.logradouro);
+          }
 
-        if (data.uf) {
-          setValue('uf', data.uf.toUpperCase());
-        }
+          if (data.uf) {
+            setValue('uf', data.uf.toUpperCase());
+          }
 
-        if (data.localidade) {
-          setValue('city', data.localidade);
-        }
-
-        // var query = `${cep} ${data.logradouro}, ${data.localidade}, ${data.uf}`;
-        // await axios.get(`http://api.positionstack.com/v1/forward?access_key=75c2c6976566e786d07e8df97bcc21b3&query="${query}, Brazil"`)
-        //   .then(({data}) =>{
-        //     if(data.data && data.data.length > 0){
-        //       var firstLocation = data.data[0];
-        //       setInitialPosition([firstLocation.latitude,firstLocation.longitude])
-        //       console.log('firstLocations', firstLocation);
-        //     }
-           
-        //   })
-      });
+          if (data.localidade) {
+            setValue('city', data.localidade);
+          }
+        });
     }
   }
 
@@ -145,6 +126,11 @@ const FormCreate = () => {
   async function handleCreateOccurrences(data: any) {
 
     const { latitude, longitude } = position;
+    
+    if(latitude === 0 || longitude === 0) {
+      alert("Clique no mapa para escolher uma posição no mapa!");
+      return false;
+    }
 
     const formData = new FormData();
 
@@ -156,31 +142,127 @@ const FormCreate = () => {
     formData.append('longitude', String(longitude));
 
     // Uma imagem só
-    console.log(images);
-    if(images.length){
+    if (images.length) {
       images.forEach((image) => {
         formData.append('image', image);
       });
-    } else{
+    } else {
       formData.append('image', '');
     }
 
-    await api
+    await getAPIClient()
       .post('/occurrences/', formData)
-      .then(({data}) => { 
+      .then(({ data }) => {
         Router.push('/occurrences/list');
       })
-      .catch((error) => { });
-
-    console.log('data', formData);
+      .catch((error) => {});
   }
 
   return (
     <form className='form' onSubmit={handleSubmit(handleCreateOccurrences)}>
       <fieldset>
-        <legend>Dados de localização da ocorrência</legend>
+        <legend>Informações da ocorrência</legend>
+
         <div className='row'>
           <div className='col-12 col-lg-5'>
+
+            <div className='form-group'>
+              <label htmlFor='category'>Categoria<span className='required-icon'>*</span></label>
+              <select
+                {...register('category')}
+                id='category'
+                name='category'
+                className='form-control'
+                defaultValue={''}
+                required
+              >
+                <option value={''} disabled>
+                  Selecione uma categoria
+                </option>
+                {categories.map((category) => {
+                  return (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div className='form-group'>
+              <label htmlFor='title'>Título<span className='required-icon'>*</span></label>
+              <input
+                {...register('title')}
+                id='title'
+                className='form-control'
+                required
+              />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='description'>Descrição<span className='required-icon'>*</span></label>
+              <textarea
+                {...register('description')}
+                rows={4}
+                id='description'
+                className='form-control'
+                required
+              />
+            </div>
+
+            <div className='form-group'>
+              <label htmlFor='images'>Fotos</label>
+              <input
+                {...register('image')}
+                type='file'
+                accept='.png, .jpg, .jpeg'
+                onChange={handleSelectImages}
+                className='form-control'
+                id='image'
+              />
+            </div>
+                
+            <div className='form-group'>
+              <label htmlFor='is_anonymous'>Registrar como anônimo</label>
+
+              <input
+                {...register('is_anonymous')}
+                type='checkbox'
+                className='form-control'
+                id='is_anonymous'
+              />
+              <br />
+              <small>Suas informações de usuário não aparecerão para outras pessoas.</small>
+            </div>
+          </div>
+          <div className='col-12 col-lg-7'>
+          <div id='map'>
+              <MapContainer
+                center={initialPosition}
+                zoom={15}
+                style={{ width: '100%', height: 380 }}
+              >
+                <TileLayer
+                  url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=sk.eyJ1IjoiZ2VvdmFuYWNvZWxobyIsImEiOiJjbDQycmJzdTg0bG05M2RsOHAycHl1Nm5jIn0.eegan_Kz-MQ4bsFngXBU4A`}
+                />
+                <Markers />
+              </MapContainer>
+            </div>
+            {(+position.latitude == 0 || +position.longitude == 0) && (
+              <div
+                className='invalid-feedback'
+                style={{ textAlign: 'center', padding: '5px' }}
+              >
+                Clique no mapa para escolher uma posição no mapa!
+              </div>
+            )}
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Detalhamento da localização da ocorrência</legend>
+        <div className='row'>
+          <div className='col-12'>
             <div className='row'>
               <div className='col-6 form-group'>
                 <label htmlFor='cep'>CEP</label>
@@ -188,7 +270,6 @@ const FormCreate = () => {
                   {...register('cep')}
                   id='cep'
                   type='text'
-                  required
                   className='form-control'
                   onChange={(event) => handleChangeCep(event)}
                 />
@@ -206,194 +287,91 @@ const FormCreate = () => {
                 </button>
               </div>
 
-              <div className='col-8 form-group'>
+              <div className='col-12 col-md-8 form-group'>
                 <label htmlFor='street'>Rua</label>
                 <input
                   {...register('street')}
                   id='street'
                   type='text'
-                  required
-                  className='form-control'/>
+                  className='form-control'
+                />
               </div>
 
-              <div className='col-4 form-group'>
+              <div className='col-12 col-md-2 form-group'>
                 <label htmlFor='number'>Número</label>
                 <input
                   {...register('number')}
                   id='number'
-                  className='form-control'/>
+                  className='form-control'
+                />
               </div>
 
-              <div className='col-6 form-group'>
+              <div className='col-12 col-md-2 form-group'>
                 <label htmlFor='complement'>Complemento</label>
                 <input
                   {...register('complement')}
                   id='complement'
                   type='text'
-                  className='form-control'/>
+                  className='form-control'
+                />
               </div>
 
-              <div className='col-6 form-group'>
-                <label htmlFor='point'>Ponto de referencia</label>
+              <div className='col-12 col-md-3 form-group'>
+                <label htmlFor='point'>Ponto de referência</label>
                 <input
                   {...register('point')}
                   id='point'
                   type='text'
-                  className='form-control'/>
+                  className='form-control'
+                />
               </div>
 
-              <div className='col-5 form-group'>
+              <div className='col-12 col-md-3 form-group'>
                 <label htmlFor='neighborhood'>Bairro</label>
                 <input
                   {...register('neighborhood')}
                   id='neighborhood'
                   type='text'
-                  required
-                  className='form-control'/>
+                  className='form-control'
+                />
               </div>
 
-              <div className='col-4 form-group'>
+              <div className='col-12 col-md-4 form-group'>
                 <label htmlFor='city'>Cidade</label>
                 <input
                   {...register('city')}
                   id='city'
                   type='text'
-                  required
-                  className='form-control'/>
+                  value="Lins"
+                  disabled
+                  className='form-control'
+                />
               </div>
 
-              <div className='col-3 form-group'>
+              <div className='col-12 col-md-2 form-group'>
                 <label htmlFor='uf'>UF</label>
                 <input
                   {...register('uf')}
                   id='uf'
                   type='text'
-                  required
-                  className='form-control'/>
+                  value="UF"
+                  disabled
+                  className='form-control'
+                />
               </div>
             </div>
           </div>
           <div className='col-12 col-lg-7'>
-            <div id='map'>
-              <MapContainer
-                center={initialPosition}
-                zoom={15}
-                style={{ width: '100%', height: 280 }}
-              >
-                <TileLayer
-                  url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=sk.eyJ1IjoiZ2VvdmFuYWNvZWxobyIsImEiOiJjbDQycmJzdTg0bG05M2RsOHAycHl1Nm5jIn0.eegan_Kz-MQ4bsFngXBU4A`}
-                />
-                <Markers />
-              </MapContainer>
-            </div>
+          
           </div>
         </div>
       </fieldset>
 
-      <fieldset>
-        <legend>Informações da ocorrência</legend>
-
-        <div className='row'>
-          <div className='col-12 col-lg-5'>
-            <div className='form-group'>
-              <label htmlFor='category'>Categoria</label>
-              <select
-                {...register('category')}
-                id='category'
-                name='category'
-                className='form-control'
-                defaultValue={''}
-                
-              >
-                <option value={''} disabled>
-                  Selecione uma categoria
-                </option>
-                {categories.map((category) => {
-                  return (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div className='form-group'>
-              <label htmlFor='images'>Fotos</label>
-              <input
-                {...register('image')}
-                type='file'
-                accept='.png, .jpg, .jpeg'
-                onChange={handleSelectImages}
-                className='form-control'
-                id='image'
-              />
-
-              {/* <div className='images-container'>
-                {previewImages.map((image) => {
-                  return (
-                    <div key={image.url}>
-                      <span
-                        className='remove-image'
-                        onClick={() => handleRemoveImage(image)}
-                      >
-                        Remover
-                      </span>
-                      <img src={image.url} className='added-image' />
-                    </div>
-                  );
-                })}
-
-                <label htmlFor='image[]' className='new-image'>
-                  Adicionar
-                </label>
-              </div> */}
-            </div>
-          </div>
-          <div className='col-12 col-lg-7'>
-            <div className='form-group'>
-              <label htmlFor='title'>Título</label>
-              <input
-                {...register('title')}
-                id='title'
-                className='form-control'
-                required
-              />
-            </div>
-
-            <div className='form-group'>
-              <label htmlFor='description'>Descrição</label>
-              <textarea
-                {...register('description')}
-                rows={4}
-                id='description'
-                className='form-control'
-                required
-              />
-            </div>
-
-            <div className='form-group'>
-              <label htmlFor='is_anonymous'>Registrar como anonimo</label>
-
-              <input
-                {...register('is_anonymous')}
-                type='checkbox'
-                className='form-control'
-                id='is_anonymous'
-              />
-              <br />
-              <small>
-                Suas informações de usuario não ira aparece para outras pessoas.
-              </small>
-            </div>
-          </div>
-        </div>
-      </fieldset>
-
-      <div  style={{ width: '100%', textAlign: 'center' }}>
+      <div style={{ width: '100%', textAlign: 'center' }}>
         <button type='submit' className='btn btn-primary-outline'>
           Salvar
         </button>
-      </div>   
+      </div>
     </form>
   );
 };

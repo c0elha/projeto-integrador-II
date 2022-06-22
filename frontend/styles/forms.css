@@ -1,6 +1,7 @@
 input,
 button,
 textarea,
+select,
 label {
     font-family: 'Montserrat', sans-serif;
 }
@@ -95,6 +96,11 @@ form.form-mini {
 .form-control:not([type=checkbox]) {
     width: 100%;
     height: calc(1.5em + 0.75rem + 2px);
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
 }
 
 textarea.form-control {

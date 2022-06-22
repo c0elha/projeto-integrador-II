@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import RenderCompleted from '../../../src/components/RenderCompleted';
 import { api } from '../../../src/services/api';
 import { getAPIClient } from '../../../src/services/axios';
+import { getCategories } from '../../../src/services/category';
 import styles from './../../../styles/pages/OccurrenceView.module.scss';
 
 interface Category {
@@ -26,31 +27,30 @@ const OccorrencesView: NextPage = ({
   const image = `http://projeto-integrador-2-frontend.herokuapp.com/static/ilustracao-share2.png`;
 
   const [category, setCategory] = useState<Category>();
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const isMounted = RenderCompleted();
 
   const MapView = useMemo(
     () =>
       dynamic(() => import('../../../src/components/MapView'), {
-        loading: () => <p>Carregando!</p>,
+        loading: () => <p style={{textAlign: 'center'}}>Carregando!</p>,
         ssr: false,
       }),
     []
   );
 
   useEffect(() => {
-    console.log('useEffect', occurrence);
-    api
-      .get('/occurrences-categories/')
-      .then(({ data }) => {
+    getCategories()
+      .then(({ data } :any) => {
+        setCategories(data);
         const category = data.find(
           (category: Category) => category.id === occurrence.category
         );
         if (category) {
           setCategory(category);
         }
-      })
-      .catch((error) => {});
+      });
   }, []);
 
   return (
@@ -129,7 +129,7 @@ const OccorrencesView: NextPage = ({
           <h4 className={`${styles.occurrence_container_image}`}>Imagem:</h4>
           {occurrence.image ? (
             <div className='view-images-container'>
-              <img src={occurrence.image}></img>
+              <img src={occurrence.image} alt="Imagem enviada pelo usuário ilustrando a ocorrência"></img>
             </div>
           ) : null}
 
@@ -137,7 +137,7 @@ const OccorrencesView: NextPage = ({
         </div>
         <div className='col-12'>
         <div id='map-view'>
-            {isMounted && <MapView occurrence={occurrence} />}
+            {isMounted && <MapView occurrence={occurrence} categories={categories}/>}
           </div>
         </div>
       </div>

@@ -2,9 +2,9 @@ import type { NextPage} from 'next';
 
 const Footer : NextPage = () => {
     return (
-        <div className='footer-wrapper container'>
+        <footer className='footer-wrapper container' id='irrodape'>
             <p>Projeto integrador II - Grupo 021</p>
-        </div>
+        </footer>
     )
 }
 

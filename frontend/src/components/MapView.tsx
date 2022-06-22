@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { FiArrowRight } from 'react-icons/fi';
-import mapIcon from '../utils/mapIcon';
 import Link from 'next/link';
 import {
   FacebookShareButton,
@@ -11,9 +10,39 @@ import {
   TwitterShareButton,
   TwitterIcon,
 } from 'next-share';
+import mapIcon from '../utils/mapIconBlack';
+import mapIconGreen from '../utils/mapIconGreen';
+import mapIconYellow from '../utils/mapIconYellow';
+import mapIconOrange from '../utils/mapIconOrange';
+import mapIconRed from '../utils/mapIconRed';
+import mapIconPurple from '../utils/mapIconPurple';
+import mapIconBlue from '../utils/mapIconBlue';
+import mapIconBlack from '../utils/mapIconBlack';
 
-const MapView = ({ occurrence }: any) => {
-  
+import 'leaflet-defaulticon-compatibility';
+
+const MapView = ({ occurrence, categories }: any) => {
+  const colorIcon = {
+    'green' : mapIconGreen,
+    'yellow' : mapIconYellow,
+    'orange' : mapIconOrange,
+    'red' : mapIconRed,
+    'purple' : mapIconPurple,
+    'blue' : mapIconBlue,
+    'black' : mapIconBlack,
+  } as any;
+
+  function getIconByCategory(category_id : number) {
+    var category = categories.find((category : any) => category.id === category_id);
+    
+    if(category){
+      if(category.color && typeof colorIcon[category.color]) {
+        return colorIcon[category.color];
+      }
+    }
+    return mapIcon;
+  }
+
   return (
     <MapContainer
       center={[+occurrence.latitude, +occurrence.longitude]}
@@ -26,7 +55,7 @@ const MapView = ({ occurrence }: any) => {
       <Marker
         title='Clique para mais detalhes'
         key={occurrence.id}
-        icon={mapIcon}
+        icon={getIconByCategory(occurrence.category)}
         position={[+occurrence.latitude, +occurrence.longitude]}
       >
         <Popup

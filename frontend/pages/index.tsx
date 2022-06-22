@@ -1,51 +1,79 @@
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import ImagemIlustracao from './../src/images/ilustracao-plana-de-suporte-ao-cliente1.png';
 import RenderCompleted from '../src/components/RenderCompleted';
-import { FiPlus } from "react-icons/fi";
+import { FiPlus } from 'react-icons/fi';
 import styles from './../styles/pages/index.module.scss';
 import { api } from '../src/services/api';
 import Link from 'next/link';
+import { getAPIClient } from '../src/services/axios';
+import { getCategories } from '../src/services/category';
 
 interface Occurrence {
   id: number;
   title: string;
   description: string;
 }
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  color: string;
+}
 
-const Home: NextPage = () => {
-  const [occurrences, setOccurrences] = useState<Occurrence[]>([]);
+const Home: NextPage = ({occurrences} : any) => {
+   const [categories, setCategories] = useState<Category[]>([]);
+
+  const colorHexColor = {
+    green: '#28bf58',
+    yellow: '#fad506',
+    orange: '#ff9a00',
+    red: '#ff4e36',
+    purple: '#d173dd',
+    blue: '#007bbf',
+    black: '#000000',
+  } as any;
+
+  function getColorByCategory(category_id: number) {
+    var category = categories.find(
+      (category: any) => category.id === category_id
+    );
+
+    if (category) {
+      if (category.color && typeof colorHexColor[category.color]) {
+        return colorHexColor[category.color];
+      }
+    }
+    return colorHexColor['black'];
+  }
 
   const isMounted = RenderCompleted();
   const MapIndex = useMemo(
     () =>
       dynamic(() => import('./../src/components/MapIndex'), {
-        loading: () => <p>Loading map...</p>,
+        loading: () => <p style={{textAlign: 'center'}}>Carregando...</p>,
         ssr: false,
       }),
     []
   );
-
   useEffect(() => {
-    api
-    .get('/occurrences-all-list/NOT_COMPLETED/')
-    .then(({ data }) => {
-      setOccurrences(data);
-    })
-    .catch((error) => { });
+    getCategories()
+      .then(({ data } : any) => {
+        setCategories(data.sort( (a : any, b:any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)));
+      })
   }, []);
 
   return (
-    <main>
-      <section className={styles.section_presentation}>
+    <main id='irconteudo'>
+      <section className={styles.section_presentation} role='banner'>
         <div className={`container ${styles.section_presentation_content}`}>
           <div className={styles.section_presentation_content_info}>
-            <h1>
+            <h2>
               Sistema web para registro de ocorrências pelos munícipes de
               Lins-SP
-            </h1>
+            </h2>
             <p>
               Um sistema web baseado na usabilidade das redes sociais, simples,
               transparente, com acessibilidade e dando visibilidade às demandas
@@ -55,16 +83,13 @@ const Home: NextPage = () => {
             </p>
           </div>
           <div className={styles.section_presentation_content_image}>
-            <Image
-              src={ImagemIlustracao}
-              alt='teste'
-            />
+            <Image src={ImagemIlustracao} alt='Ilustração de uma menina mexendo no notebook com fone de ouvido e microfone' />
           </div>
         </div>
       </section>
-      <section className={styles.section_about} id="about">
+      <section className={styles.section_about} id='sobre'>
         <div className={`container`}>
-          <h1>Sobre o projeto</h1>
+          <h2>Sobre o projeto</h2>
           <p>
             As ouvidorias públicas são instrumentos de participação popular que
             possibilitam o atendimento dos interesses dos cidadãos, captando as
@@ -98,26 +123,60 @@ const Home: NextPage = () => {
         </div>
       </section>
 
-      <section className={styles.section_map} id="occurrences-map">
+      <section className={styles.section_map} id='ocorrencias-lista'>
         <div className='container'>
-          <h1>Acompanhar ocorrências</h1>
-          <p>Descrição</p>
+          <h2>Acompanhar ocorrências</h2>
+          <p>
+            Clica no ponto desejado para ter mais informações e compartilhar nas
+            redes sociais.
+          </p>
           <div className='row'>
             <div className='col-12 col-lg-8'>
               <div id='project-app'>
-                {isMounted && <MapIndex occurrences={occurrences}/>}
+                {isMounted && (
+                  <MapIndex occurrences={occurrences} categories={categories} />
+                )}
+              </div>
+              <h3 style={{ marginTop: '20px'}}>Legendas</h3>
+              <div className='row'>
+                {categories.map((category, i) => {
+                  return (
+                    <div className='col-12 col-lg-6 box-content-legend-category-map' key={i}>
+                      <div
+                        className={`box-legend-category-map box-legend-color-${category.color}`}
+                      ></div>
+                      <span>{category.name}</span>
+                    </div>
+                  );
+                })}
+                <div className='col-6 col-lg-3'></div>
               </div>
             </div>
-            <div className='col-12 col-lg-4'>
-              <p>Pequena descrição</p>
-              <Link href="/occurrences/create">
+            <div
+              className='col-12 col-lg-4'
+              style={{
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <p>
+                Crie sua ocorrência de forma simples e rápida assim podemos
+                mapear e agrupar os problemas da cidade e solicitar melhorias de
+                forma assertiva.
+              </p>
+              <Link href='/occurrences/create'>
                 <a className='btn btn-primary'>
                   Criar ocorrência
-                  <FiPlus size={20} color="#fff" />
-                  </a>
+                  <FiPlus size={20} color='#fff' />
+                </a>
               </Link>
-              <Link href="/occurrences/all">
-                <a className='btn btn-primary-outline' style={{marginTop: '10px'}}>
+              <Link href='/occurrences/all'>
+                <a
+                  className='btn btn-primary-outline'
+                  style={{ marginTop: '10px' }}
+                >
                   Ver melhor todas ocorrências
                 </a>
               </Link>
@@ -130,3 +189,22 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  var occurrences = {};
+  const apiClient = getAPIClient(ctx);
+
+  await apiClient
+    .get('/occurrences-all-list/NOT_COMPLETED/')
+    .then(({ data }) => {
+      occurrences = data;
+    })
+    .catch((error) => {});
+
+  return {
+    props: {
+      occurrences: occurrences,
+    },
+  };
+};
+

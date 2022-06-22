@@ -33,7 +33,6 @@ export async function signInRequest(data: SignInRequestData) {
 }
 
 export async function registerRequest(data: RegisterRequestData) {
-  console.log('registerRequest data', data);
   
   let user = null;
 

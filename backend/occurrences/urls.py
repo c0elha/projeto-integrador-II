@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from .viewsets import ActionsViewSet, CategoriesViewSet, CommentsViewSet, OccurrencesViewSet
-from .views import getOcurrencesByUser, getOcurrencesAllByStatus
+from .views import getOcurrencesByUser, getOcurrencesAllByStatus, getUserByOcurrences
 
 route = routers.DefaultRouter()
 
@@ -16,4 +16,5 @@ urlpatterns = [
     path('', include(route.urls)),
     path('occurrences-list/', getOcurrencesByUser),
     path('occurrences-all-list/<str:type_status>/', getOcurrencesAllByStatus),
+    path('occurrences-user/<str:occurrence_id>/', getUserByOcurrences),
 ]

@@ -12,13 +12,17 @@ const Login: NextPage = () => {
   const { signIn, recoverUser } = useAuth();
 
   async function handleSignIn(data: any) {
+    window.loadingUtils.show();
     await signIn(data)
       .then(() => {
         console.log('sign in success', data);
       })
       .catch((res) => {
         console.error('sign in error', res);
-      });
+      })
+      .finally(() => {
+        window.loadingUtils.hide();
+      })
   }
 
   return (

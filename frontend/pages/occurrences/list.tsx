@@ -1,12 +1,9 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import { destroyCookie, parseCookies } from 'nookies';
-import { useEffect, useState } from 'react';
-import { api } from '../../src/services/api';
 import { getAPIClient } from '../../src/services/axios';
 import Link from 'next/link';
 
 import styles from './../../styles/pages/OccurrencesList.module.scss';
-import { any } from 'prop-types';
 
 interface Occurrences {
   id: number;
